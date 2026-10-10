@@ -104,6 +104,14 @@ storage and install manifests, the deep Proton setup on Linux, all of it? The
 original, much bigger write-up lives in
 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
+## Known issues
+
+**The information block (portrait, description, developer) briefly disappears while scrolling.**
+Steam re-renders the page as you scroll, and the block can measure itself at zero height in
+one of those passes — it comes back on its own as soon as the page settles or you scroll back.
+A fix applying the height through a ResizeObserver is in this version; if you still see it,
+press the ⓘ button in the play bar to collapse and re-expand the block.
+
 ## Credits
 
 Built on [Legendary](https://github.com/derrod/legendary), powered by
