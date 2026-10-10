@@ -28,7 +28,7 @@ ever leaving the client.
 | You need | Where | Why |
 |---|---|---|
 | [Millennium](https://steambrew.app/) | Windows and Linux | The plugin loader for Steam — install it first |
-| Sing in to Epic from the plugin panel | Windows and Linux | The plugin reads your library through it |
+| Sign in to Epic from the plugin panel | Windows and Linux | The plugin reads your library through it |
 | [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) | **Linux only** | Lets games run through the same Proton Steam already has |
 
 **Nothing else.** The plugin downloads
@@ -75,10 +75,9 @@ available as an easy package install from your system's app store.
 That's the whole routine. The first sync on a large account takes a few minutes;
 after that it picks up only what changed.
 
-**Sign in / Sign out / Sync / Remove everything** is the sunset of buttons on
-the panel — keep it summarised above if you want to know what each does
-(the fabric covers it all well). None of them touches Epic's launcher, and
-**Remove everything** deletes no installed files either — it only takes the
+The panel has four buttons and no more: **Sign in** and **Sign out** (the
+account line), **Sync**, and **Remove everything**. **Remove everything** asks
+first, and it deletes no installed files either — it only removes the
 shortcuts and artwork out of Steam until the next Sync restores them.
 
 ## Troubleshooting
