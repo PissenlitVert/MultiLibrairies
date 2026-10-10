@@ -1,0 +1,6 @@
+# Local runtime state: cache, jobs, logs, shell helpers. Recreated at will by
+# the plugin; carries a copy of the user's session and personal settings.
+backend/data/
+
+# Codebuff agent workspace metadata
+.freebuff/
