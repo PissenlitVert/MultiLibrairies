@@ -46,8 +46,10 @@ function platform.separator()
   return platform.IS_WINDOWS and "\\" or "/"
 end
 
----The machine's CPU architecture, as `uname -m` spells it on Linux and as
----`PROCESSOR_ARCHITECTURE` spells it on Windows.
+---The machine's CPU architecture, in `uname -m`'s spelling on every platform.
+---Windows names the same CPUs AMD64 and ARM64, and `vendor`'s pins are keyed
+---`x86_64`/`aarch64` for both operating systems, so the translation happens
+---here rather than as a second set of keys over there.
 ---
 ---Only ever needed to pick which legendary build to download, so it costs a
 ---subprocess once, the first time it is asked, and the answer is kept: a wrong
@@ -56,6 +58,13 @@ end
 ---@type string|nil
 local architecture = nil
 
+---Windows' name for a CPU, in `uname -m`'s spelling - which is what the pins
+---in `vendor` are keyed by, on Windows as on Linux.
+local WINDOWS_ARCHITECTURES = {
+  AMD64 = "x86_64",
+  ARM64 = "aarch64",
+}
+
 ---@return string x86_64, aarch64, ...
 function platform.architecture()
   if architecture then
@@ -63,14 +72,27 @@ function platform.architecture()
   end
 
   if platform.IS_WINDOWS then
-    -- AMD64 on an x64 CPU, ARM64 on an ARM one. `PROCESSOR_ARCHITEW6432` is the
-    -- 32-bit process on 64-bit Windows reading its 64-bit sibling's name, and
-    -- is only set in that case.
-    local value = utils.getenv("PROCESSOR_ARCHITECTURE")
-    if value == "AMD64" and utils.getenv("PROCESSOR_ARCHITEW6432") then
-      value = "ARM64"
+    -- `PROCESSOR_ARCHITEW6432` is set only by a process Windows is not running
+    -- natively - a 32-bit one on 64-bit Windows, an x64-emulated one on ARM -
+    -- and it carries the *machine's* CPU rather than the process's, so it is
+    -- read first. A 32-bit Steam would otherwise report `x86`, and no
+    -- legendary build is published for that.
+    local value = utils.getenv("PROCESSOR_ARCHITEW6432")
+    if not value or value == "" then
+      value = utils.getenv("PROCESSOR_ARCHITECTURE")
     end
-    architecture = value or "AMD64"
+
+    if not value or value == "" then
+      -- Nothing said anything, and x86_64 is the machine Steam itself is
+      -- overwhelmingly run on.
+      architecture = "x86_64"
+    else
+      -- Windows spells its CPUs AMD64 and ARM64; the pins in `vendor` are
+      -- keyed `x86_64` and `aarch64`. A name the table has never heard of is
+      -- passed through unchanged, so a machine nobody has seen still gets a
+      -- message naming it rather than the wrong binary.
+      architecture = WINDOWS_ARCHITECTURES[value] or value
+    end
   else
     local output = utils.exec("uname -m 2>/dev/null")
     architecture = utils.trim(output or "")
